@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React from "react";
 import Book from "./Book";
+import PropTypes from "prop-types";
 
-const BookList = ({ title, books, updateBookShelf }) => {
+const BookList = ({ title, books, updateBookShelf, shelfLines }) => {
   return (
     <div className="bookshelf">
       <h2 className="bookshelf-title">{title}</h2>
@@ -9,13 +10,26 @@ const BookList = ({ title, books, updateBookShelf }) => {
         <ol className="books-grid">
           <li>
             {books.map((book) => {
-              return <Book updateBookShelf={updateBookShelf} book={book} />;
+              return (
+                <Book
+                  books={books}
+                  updateBookShelf={updateBookShelf}
+                  book={book}
+                  shelfLines={shelfLines}
+                />
+              );
             })}
           </li>
         </ol>
       </div>
     </div>
   );
+};
+
+BookList.propTypes = {
+  books: PropTypes.array,
+  updateBookShelf: PropTypes.func.isRequired,
+  shelfLines: PropTypes.array,
 };
 
 export default BookList;

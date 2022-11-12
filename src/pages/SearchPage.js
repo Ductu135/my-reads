@@ -2,8 +2,11 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { search } from "../utilities/BooksAPI";
 import Book from "../components/Book";
+import { shelfLines } from "../utilities/CommonData";
+import PropTypes from "prop-types";
+import debounce from "lodash.debounce";
 
-const SearchPage = ({ updateBookShelf }) => {
+const SearchPage = ({ books, updateBookShelf }) => {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
   const navigate = useNavigate();
@@ -13,15 +16,23 @@ const SearchPage = ({ updateBookShelf }) => {
 
   useEffect(
     (query) => {
-      setQuery(query);
+      if (query === "") {
+        setQuery([]);
+      } else {
+        setQuery(query);
+      }
     },
     [query]
   );
 
   const updateQuery = (e) => {
-    search(e).then((result) => {
-        setResults(result)
-    });
+    const debouncedUpdate = debounce(() => {
+      search(e).then((result) => {
+        setResults(result);
+      });
+    }, 200);
+    console.log(results);
+    debouncedUpdate();
   };
 
   return (
@@ -39,8 +50,19 @@ const SearchPage = ({ updateBookShelf }) => {
       </div>
       <div className="search-books-results">
         <div className="books-grid" style={{ justifyContent: "left" }}>
-          {(results.length > 0) ? (
-            results.map((book) => <Book book={book} updateBookShelf={updateBookShelf} />)
+          {results ? (
+            results.length > 0 ? (
+              results.map((book) => (
+                <Book
+                  books={books}
+                  book={book}
+                  updateBookShelf={updateBookShelf}
+                  shelfLines={shelfLines}
+                />
+              ))
+            ) : (
+              <div>There is no result</div>
+            )
           ) : (
             <div>There is no result</div>
           )}
@@ -48,6 +70,10 @@ const SearchPage = ({ updateBookShelf }) => {
       </div>
     </div>
   );
+};
+
+SearchPage.propTypes = {
+  updateBookShelf: PropTypes.func.isRequired,
 };
 
 export default SearchPage;

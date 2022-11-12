@@ -1,6 +1,16 @@
-import React from "react";
+import React, { useState } from "react";
+import PropTypes from "prop-types";
 
-const Book = ({ book, updateBookShelf }) => {
+const Book = ({ books, book, updateBookShelf, shelfLines }) => {
+  const checkTheBookIsSelected = (shelf) => {
+    const selectedBook = books.find((b) => b.id === book.id);
+    if (selectedBook && shelf.id === selectedBook.shelf) {
+      return `✔ ${shelf.name}`;
+    } else {
+      return shelf.name;
+    }
+  };
+
   return (
     <div>
       <div className="book">
@@ -21,14 +31,17 @@ const Book = ({ book, updateBookShelf }) => {
                   value={book.shelf ? book.shelf : ""}
                   onChange={(e) => {
                     updateBookShelf(book, e.target.value);
-                    console.log(e.target.value);
                   }}
                 >
                   <option disabled>Move to...</option>
-                  <option style={{display: 'none'}}></option>
-                  <option value="currentlyReading">Currently Reading</option>
-                  <option value="wantToRead">Want to Read</option>
-                  <option value="read">Read</option>
+                  <option style={{ display: "none" }}></option>
+                  {shelfLines.map((shelf) => {
+                    return (
+                      <option value={shelf.id}>
+                        {checkTheBookIsSelected(shelf)}
+                      </option>
+                    );
+                  })}
                   <option value="none">None</option>
                 </select>
               </div>
@@ -54,6 +67,12 @@ const Book = ({ book, updateBookShelf }) => {
       </div>
     </div>
   );
+};
+
+Book.propTypes = {
+  books: PropTypes.array,
+  updateBookShelf: PropTypes.func.isRequired,
+  shelfLines: PropTypes.array,
 };
 
 export default Book;

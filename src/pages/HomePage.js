@@ -1,21 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import BookList from "../components/BookList";
 import { useNavigate } from "react-router-dom";
-
-const shelfLines = [
-  {
-    name: "Currently Reading",
-    id: "currentlyReading",
-  },
-  {
-    name: "Want To Read",
-    id: "wantToRead",
-  },
-  {
-    name: "Read",
-    id: "read",
-  },
-];
+import { shelfLines } from "../utilities/CommonData";
+import PropTypes from "prop-types";
 
 const HomePage = ({ books, updateBookShelf }) => {
   const navigate = useNavigate();
@@ -42,6 +29,7 @@ const HomePage = ({ books, updateBookShelf }) => {
                     updateBookShelf={updateBookShelf}
                     title={shelf.name}
                     books={bookListWithKey}
+                    shelfLines={shelfLines}
                   />
                 );
               })
@@ -59,6 +47,11 @@ const HomePage = ({ books, updateBookShelf }) => {
       </div>
     </div>
   );
+};
+
+HomePage.propTypes = {
+  books: PropTypes.array,
+  updateBookShelf: PropTypes.func.isRequired,
 };
 
 export default HomePage;
